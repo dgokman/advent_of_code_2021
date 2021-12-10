@@ -16,6 +16,7 @@ end
 # 1
 field = A.split("\n").map {|x| x.split("")}
 count = 0
+low_points = []
 
 i = 0
 j = 0
@@ -24,6 +25,7 @@ while i < field.length
     adjacent_acres = [field.fetch(i-1).fetch(j), field.fetch(i).fetch(j-1),field.fetch(i+1).fetch(j), field.fetch(i).fetch(j+1)]
 
     if adjacent_acres.reject {|a| a.nil?}.map(&:to_i).all? {|b| field[i][j].to_i < b}
+      low_points << [i,j]
       count += field[i][j].to_i+1
     end  
     j += 1
@@ -53,52 +55,23 @@ while i < field.length
 end 
 
 @hash = Hash.new(0)
+@visited = Hash.new(0)
 
 def count_basin(field, i, j, basin)
-  return [field, basin] if field[i][j] != "."
-  count = 1
-  field[i][j] = count
-  5000.times do
-    adjacents = [field.fetch(i-1).fetch(j), field.fetch(i).fetch(j-1),field.fetch(i+1).fetch(j), field.fetch(i).fetch(j+1)]
-    dirs = []
-    if adjacents[0] && adjacents[0] != "*"
-      dirs << [-1, 0]
-    end  
-    if adjacents[1] && adjacents[1] != "*"
-      dirs << [0, -1]
-    end  
-    if adjacents[2] && adjacents[2] != "*"  
-      dirs << [1, 0]
-    end  
-    if adjacents[3] && adjacents[3] != "*"  
-      dirs << [0, 1]
-    end  
-    
-    dir = dirs.sample
-    i += dir[0]
-    j += dir[1]
-    unless field[i][j].to_i > 0
-      count += 1
-      field[i][j] = count 
-    end  
+  @hash[basin] += 1
+  
+  dirs = [[-1, 0], [0, -1], [1, 0], [0, 1]]
+  dirs.map {|ii,jj| [i+ii, j+jj]}.select {|i,j| field.fetch(i).fetch(j) == "." && @visited[[i,j]] == 0}.each do |ii,jj|
+    @visited[[ii,jj]] += 1
+
+    count_basin(field, ii, jj, basin) unless @visited[[ii,jj]] > 1
   end
-  basin += 1
-  @hash[basin] = count
-  [field, basin]
 end
 
-i = 0
-j = 0
-new_field = Marshal.load(Marshal.dump(field))
-while i < field.length
-  while j < field[i].length
-    new_field, basin = count_basin(new_field, i, j, basin) 
-    j += 1
-  end
-  i += 1
-  j = 0
-end 
+low_points.each_with_index do |(i,j), idx|
+  count_basin(field, i, j, idx)
+end  
 
-p @hash.values.sort[-3..-1].inject(:*)
+p @hash.values.map {|a| a-1}.sort[-3..-1].inject(:*)
 
 
