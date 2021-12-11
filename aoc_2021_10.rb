@@ -17,7 +17,7 @@ def illegal_score(str, problem=1)
       vals.shift
     end
   end
-  problem == 1 ? 0 : vals[0..-1]
+  problem == 1 ? 0 : vals
 end
 
 score = 0
