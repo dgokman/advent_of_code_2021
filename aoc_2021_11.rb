@@ -1,5 +1,3 @@
-require 'set'
-
 A = "7777838353
 2217272478
 3355318645
@@ -44,7 +42,7 @@ end
 field = A.split("\n").map {|x| x.split("").map(&:to_i)}
 steps = 1
 loop do
-  flashed = Set.new
+  flashed = []
   i = 0
   j = 0
   while i < field.length
