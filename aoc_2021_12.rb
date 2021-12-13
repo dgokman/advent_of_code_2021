@@ -67,11 +67,10 @@ def paths(graph, problem=1)
   count = 0
   arrs = [["start"]]
   loop do
-    new_arrs = arrs.clone.to_set
+    new_arrs = arrs.to_set
     arrs.each do |arr|
       new_arr = arr.clone
-      x = arr.last
-      graph[x].each do |y|
+      graph[arr.last].each do |y|
         new_new_arr = new_arr.clone
         new_new_arr << y
         if y == "end"
@@ -83,10 +82,9 @@ def paths(graph, problem=1)
     end
     return count if count > 0 && finished.length == count
     count = finished.length
-    arrs = new_arrs.clone.select {|a| problem == 1 ? valid_path_one?(a,graph) : valid_path_two?(a,graph)}
+    arrs = new_arrs.select {|a| problem == 1 ? valid_path_one?(a,graph) : valid_path_two?(a,graph)}
   end
 end
 
 p paths(graph, 1)
 p paths(graph, 2)
-# p @finished.count
