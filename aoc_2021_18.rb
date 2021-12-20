@@ -2,10 +2,6 @@ A = File.read("aoc_2021_18.txt")
 
 fish = A.split("\n").map {|a| eval(a)}
 
-def add(a,b)
-  [a,b]
-end
-
 def explode?(snail_fish)
   snail_fish.flatten(3).any? {|a| a.is_a?(Array)}
 end
@@ -119,7 +115,6 @@ def reduce(snail_fish)
   snail_fish  
 end
 
-
 def recurse(obj)
   if obj.class == Array && obj.any? {|a| a.is_a? Array }
     obj.each { |a| recurse(a) }
@@ -134,9 +129,9 @@ end
 i = 0
 while i < fish.length-1
   if i == 0
-    snail_fish = reduce(add(fish[0],fish[1]))
+    snail_fish = reduce([fish[0],fish[1]])
   else
-    snail_fish = reduce(add(snail_fish,fish[i+1]))  
+    snail_fish = reduce([snail_fish,fish[i+1]])  
   end
   i += 1
 end
@@ -151,14 +146,14 @@ p @arr.to_i
 max = 0
 fish.combination(2).each do |fish1, fish2|
 
-  snail_fish = reduce(add(fish1, fish2))
+  snail_fish = reduce([fish1, fish2])
   @arr = snail_fish.to_s
   recurse(snail_fish)
   if @arr.to_i > max
     max = @arr.to_i
   end  
 
-  snail_fish = reduce(add(fish2, fish1))
+  snail_fish = reduce([fish2, fish1])
   @arr = snail_fish.to_s
   recurse(snail_fish)
   if @arr.to_i > max
